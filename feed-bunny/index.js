@@ -1,20 +1,51 @@
-module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
+const apiKey = process.env["AIRTABLE_API"];
+const tableBase = process.env["AIRTABLE_BASE"];
+const Airtable = require("airtable");
+const base = new Airtable({ apiKey: apiKey }).base(tableBase);
+const moment = require("moment");
+module.exports = async function(context, req) {
+    context.log("JavaScript HTTP trigger function processed a request.");
 
     if (req.query.fed) {
-        return context.res = {
+        var current = moment().format("YYYY-MM-DD hh:mm:ss");
+        console.log(current);
+        base("Feedings").create(
+            [
+                {
+                    fields: {
+                        Feeding: current
+                    }
+                }
+            ],
+            function(err, records) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                records.forEach(function(record) {
+                    console.log(record.getId());
+                });
+            }
+        );
+        return (context.res = {
             // status: 200, /* Defaults to 200 */
-            body: 'The bunnies were just fed' 
-        };
+            body: "The bunnies were just fed"
+        });
     }
 
     if (req.query.check) {
-        return context.res = {
-            body: 'Just checking if the bunnies were fed today'
-        }
-    }
+        const record = await base("Feedings")
+            .select({
+                maxRecords: 1,
+                sort: [{ field: "Feeding", direction: "desc" }]
+            })
+            .all();
 
-    context.res = {
-        body: 'Nothing happened'
+        const time = moment(record[0].get('Feeding')).zone(-12).format("MMM D, YYYY h:mm a");
+        console.log(time);
+
+        return (context.res = {
+            body: "The bunnies were last fed at " + time
+        });
     }
 };
