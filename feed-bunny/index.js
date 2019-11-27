@@ -48,4 +48,8 @@ module.exports = async function(context, req) {
             body: "The bunnies were last fed at " + time
         });
     }
+
+    return (context.res = {
+        body: "Nothing happened"
+    });
 };
