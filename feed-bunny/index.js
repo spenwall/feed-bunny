@@ -7,7 +7,7 @@ module.exports = async function(context, req) {
     context.log("JavaScript HTTP trigger function processed a request.");
 
     if (req.query.fed) {
-        var current = moment().format("YYYY-MM-DD hh:mm:ss");
+        var current = moment.utc().zone(7).format("YYYY-MM-DD HH:mm:ss");
         console.log(current);
         base("Feedings").create(
             [
@@ -41,7 +41,7 @@ module.exports = async function(context, req) {
             })
             .all();
 
-        const time = moment(record[0].get('Feeding')).zone(-12).format("MMM D, YYYY h:mm a");
+        const time = moment(record[0].get('Feeding')).format("MMM D, YYYY h:mm a");
         console.log(time);
 
         return (context.res = {
