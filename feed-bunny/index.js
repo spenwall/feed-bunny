@@ -50,7 +50,7 @@ module.exports = async function(context, req) {
 
         if (time < limit) {
             axios.post('https://api.pushbullet.com/v2/pushes', {
-                "body":"The bunnies were last fed " + time.add(7, 'hours').format('MMM, D, h:mm a'),
+                "body":"The bunnies were last fed " + time.format('MMM, D, h:mm a'),
                 "title":"Feed the Bunnies",
                 "type":"note",
                 "device_iden":"ujy3JUA4bgOsjEkIGZU2qi"
@@ -63,7 +63,7 @@ module.exports = async function(context, req) {
         }
 
         return (context.res = {
-            body: "Checked the bunnies were fed in the last 10 hours. Last fed " + time.add(7, 'hours').format('MMM, D, h:mm a')
+            body: "Checked the bunnies were fed in the last 10 hours. Last fed " + time.format('MMM, D, h:mm a')
         });
     }
 
